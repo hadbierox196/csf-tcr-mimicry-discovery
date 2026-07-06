@@ -27,11 +27,15 @@ def build_arg_parser() -> argparse.ArgumentParser:
         description="Structure-based TCR-pMHC molecular mimicry discovery.",
     )
     parser.add_argument(
-        "--config", type=Path, required=True,
+        "--config",
+        type=Path,
+        required=True,
         help="Path to a validated config.yaml (see config/config.yaml).",
     )
     parser.add_argument(
-        "--sample-id", type=str, required=True,
+        "--sample-id",
+        type=str,
+        required=True,
         help="De-identified sample/patient ID to process.",
     )
     return parser

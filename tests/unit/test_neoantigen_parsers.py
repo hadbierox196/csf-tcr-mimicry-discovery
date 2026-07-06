@@ -15,13 +15,17 @@ def _write_pvacseq_tsv(path: Path) -> None:
     pd.DataFrame(
         [
             {
-                "MT Epitope Seq": "SLLMWITQV", "WT Epitope Seq": "SLLMWITQC",
-                "HLA Allele": "HLA-A*02:01", "Gene Name": "TP53",
+                "MT Epitope Seq": "SLLMWITQV",
+                "WT Epitope Seq": "SLLMWITQC",
+                "HLA Allele": "HLA-A*02:01",
+                "Gene Name": "TP53",
                 "Best MT Score": 45.2,
             },
             {
-                "MT Epitope Seq": "GILGFVFTL", "WT Epitope Seq": "GILGFVATL",
-                "HLA Allele": "HLA-A*02:01", "Gene Name": "KRAS",
+                "MT Epitope Seq": "GILGFVFTL",
+                "WT Epitope Seq": "GILGFVATL",
+                "HLA Allele": "HLA-A*02:01",
+                "Gene Name": "KRAS",
                 "Best MT Score": 800.0,  # weaker than the default 500nM cutoff
             },
         ]
@@ -49,9 +53,7 @@ def test_parse_pvacseq_report_affinity_filter_disabled(tmp_path: Path) -> None:
     tsv_path = tmp_path / "pvacseq.tsv"
     _write_pvacseq_tsv(tsv_path)
 
-    neoantigens = parse_pvacseq_report(
-        tsv_path, sample_id="pt-001", max_binding_affinity_nm=None
-    )
+    neoantigens = parse_pvacseq_report(tsv_path, sample_id="pt-001", max_binding_affinity_nm=None)
 
     assert len(neoantigens) == 2
 

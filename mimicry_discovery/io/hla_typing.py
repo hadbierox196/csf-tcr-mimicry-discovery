@@ -78,8 +78,7 @@ def parse_hla_allele(raw: str) -> HLAAllele:
     match = _HLA_PATTERN.match(normalized)
     if match is None:
         raise ValueError(
-            f"'{raw}' is not a valid IPD-IMGT/HLA allele string "
-            f"(expected e.g. 'HLA-A*02:01')."
+            f"'{raw}' is not a valid IPD-IMGT/HLA allele string (expected e.g. 'HLA-A*02:01')."
         )
     groups = match.groupdict()
     return HLAAllele(

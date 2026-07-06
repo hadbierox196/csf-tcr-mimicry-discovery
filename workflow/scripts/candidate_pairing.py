@@ -88,9 +88,7 @@ def main(
         same_allele = find_self_peptides_for_allele(
             neoantigen["hla_allele"], self_peptide_reference
         )
-        same_length = find_self_peptides_by_length(
-            len(neoantigen["peptide"]), same_allele
-        )
+        same_length = find_self_peptides_by_length(len(neoantigen["peptide"]), same_allele)
         for self_peptide in same_length:
             candidates.append(
                 {

@@ -21,13 +21,21 @@ from mimicry_discovery.structure.base import StructurePredictionRequest
 from mimicry_discovery.structure.tcrdock_adapter import TCRDockPredictor, _to_tcrdock_mhc_string
 
 _PAIRED_REQUEST = StructurePredictionRequest(
-    tcr_cdr3_beta="CASSIRSSYEQYF", tcr_v_gene="TRBV19", tcr_j_gene="TRBJ2-7",
-    peptide="SLLMWITQV", hla_allele="HLA-A*02:01",
-    tcr_cdr3_alpha="CAYRSAQGGSEKLVF", tcr_v_gene_alpha="TRAV38-2/DV8", tcr_j_gene_alpha="TRAJ52",
+    tcr_cdr3_beta="CASSIRSSYEQYF",
+    tcr_v_gene="TRBV19",
+    tcr_j_gene="TRBJ2-7",
+    peptide="SLLMWITQV",
+    hla_allele="HLA-A*02:01",
+    tcr_cdr3_alpha="CAYRSAQGGSEKLVF",
+    tcr_v_gene_alpha="TRAV38-2/DV8",
+    tcr_j_gene_alpha="TRAJ52",
 )
 _UNPAIRED_REQUEST = StructurePredictionRequest(
-    tcr_cdr3_beta="CASSIRSSYEQYF", tcr_v_gene="TRBV19", tcr_j_gene="TRBJ2-7",
-    peptide="SLLMWITQV", hla_allele="HLA-A*02:01",
+    tcr_cdr3_beta="CASSIRSSYEQYF",
+    tcr_v_gene="TRBV19",
+    tcr_j_gene="TRBJ2-7",
+    peptide="SLLMWITQV",
+    hla_allele="HLA-A*02:01",
 )
 
 
@@ -48,7 +56,16 @@ def test_write_targets_tsv_matches_tcrdock_schema_exactly(tmp_path: Path) -> Non
     assert len(rows) == 1
     row = rows[0]
     assert list(row.keys()) == [
-        "organism", "mhc_class", "mhc", "peptide", "va", "ja", "cdr3a", "vb", "jb", "cdr3b",
+        "organism",
+        "mhc_class",
+        "mhc",
+        "peptide",
+        "va",
+        "ja",
+        "cdr3a",
+        "vb",
+        "jb",
+        "cdr3b",
     ]
     assert row["mhc"] == "A*02:01"
     assert row["cdr3a"] == "CAYRSAQGGSEKLVF"
@@ -76,8 +93,10 @@ def test_predict_calls_the_real_two_script_pipeline_in_order(tmp_path: Path) -> 
     exact flags documented in TCRdock's README, then raises NotImplementedError
     (output parsing isn't wired in yet -- see the module docstring)."""
     predictor = TCRDockPredictor(
-        output_dir=tmp_path, tcrdock_dir="/opt/TCRdock",
-        alphafold_data_dir="/data/alphafold", model_name="model_2_ptm",
+        output_dir=tmp_path,
+        tcrdock_dir="/opt/TCRdock",
+        alphafold_data_dir="/data/alphafold",
+        model_name="model_2_ptm",
     )
     calls = []
 

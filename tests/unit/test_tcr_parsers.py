@@ -16,20 +16,37 @@ from mimicry_discovery.io.tcr_parsers import (
 )
 
 _COLUMNS = [
-    "chain", "v_gene", "j_gene", "cdr3", "productive",
-    "high_confidence", "umis", "raw_clonotype_id",
+    "chain",
+    "v_gene",
+    "j_gene",
+    "cdr3",
+    "productive",
+    "high_confidence",
+    "umis",
+    "raw_clonotype_id",
 ]
 
 
 def _contig_row(
-    chain: str, v_gene: str, j_gene: str, cdr3: str,
-    umis: int, clonotype_id: str, productive: str = "True", high_confidence: str = "True",
+    chain: str,
+    v_gene: str,
+    j_gene: str,
+    cdr3: str,
+    umis: int,
+    clonotype_id: str,
+    productive: str = "True",
+    high_confidence: str = "True",
 ) -> dict:
     """Build one synthetic 10x contig row with sensible QC-passing defaults."""
     return {
-        "chain": chain, "v_gene": v_gene, "j_gene": j_gene, "cdr3": cdr3,
-        "productive": productive, "high_confidence": high_confidence,
-        "umis": umis, "raw_clonotype_id": clonotype_id,
+        "chain": chain,
+        "v_gene": v_gene,
+        "j_gene": j_gene,
+        "cdr3": cdr3,
+        "productive": productive,
+        "high_confidence": high_confidence,
+        "umis": umis,
+        "raw_clonotype_id": clonotype_id,
     }
 
 
@@ -41,10 +58,13 @@ def _write_10x_csv(path: Path, rows: list[dict]) -> None:
 def test_parse_10x_vdj_pairs_alpha_and_beta_by_clonotype_id(tmp_path: Path) -> None:
     """Contigs sharing a raw_clonotype_id are paired into one clonotype."""
     csv_path = tmp_path / "contigs.csv"
-    _write_10x_csv(csv_path, [
-        _contig_row("TRB", "TRBV19", "TRBJ2-7", "CASSIRSSYEQYF", 12, "clonotype4"),
-        _contig_row("TRA", "TRAV38-2/DV8", "TRAJ52", "CAYRSAQGGSEKLVF", 10, "clonotype4"),
-    ])
+    _write_10x_csv(
+        csv_path,
+        [
+            _contig_row("TRB", "TRBV19", "TRBJ2-7", "CASSIRSSYEQYF", 12, "clonotype4"),
+            _contig_row("TRA", "TRAV38-2/DV8", "TRAJ52", "CAYRSAQGGSEKLVF", 10, "clonotype4"),
+        ],
+    )
 
     clonotypes = parse_10x_vdj(csv_path, sample_id="pt-001", qc=QcThresholds())
 
@@ -62,13 +82,21 @@ def test_parse_10x_vdj_drops_non_productive_chain_but_keeps_the_other(tmp_path: 
     """A clonotype with one non-productive chain survives as single-chain,
     not dropped entirely."""
     csv_path = tmp_path / "contigs.csv"
-    _write_10x_csv(csv_path, [
-        _contig_row("TRB", "TRBV7-2", "TRBJ1-1", "CASSPGQGAYEQYF", 3, "clonotype2"),
-        _contig_row(
-            "TRA", "TRAV12-2", "TRAJ42", "CAVNTGGFKTIF", 1, "clonotype2",
-            productive="False",
-        ),
-    ])
+    _write_10x_csv(
+        csv_path,
+        [
+            _contig_row("TRB", "TRBV7-2", "TRBJ1-1", "CASSPGQGAYEQYF", 3, "clonotype2"),
+            _contig_row(
+                "TRA",
+                "TRAV12-2",
+                "TRAJ42",
+                "CAVNTGGFKTIF",
+                1,
+                "clonotype2",
+                productive="False",
+            ),
+        ],
+    )
 
     clonotypes = parse_10x_vdj(csv_path, sample_id="pt-001", qc=QcThresholds())
 
@@ -98,9 +126,15 @@ def test_tcr_clonotype_rejects_invalid_cdr3() -> None:
     """Non-amino-acid characters in a CDR3 string are rejected at construction."""
     with pytest.raises(ValueError, match="non-standard amino acid"):
         TCRClonotype(
-            sample_id="pt-001", cdr3_alpha=None, v_gene_alpha=None, j_gene_alpha=None,
-            cdr3_beta="CASSL123", v_gene_beta="TRBV20-1", j_gene_beta="TRBJ2-1",
-            umi_count=5, clonal_frequency=1.0,
+            sample_id="pt-001",
+            cdr3_alpha=None,
+            v_gene_alpha=None,
+            j_gene_alpha=None,
+            cdr3_beta="CASSL123",
+            v_gene_beta="TRBV20-1",
+            j_gene_beta="TRBJ2-1",
+            umi_count=5,
+            clonal_frequency=1.0,
         )
 
 
@@ -108,9 +142,15 @@ def test_tcr_clonotype_requires_at_least_one_chain() -> None:
     """A clonotype with neither chain resolved is rejected -- it means nothing."""
     with pytest.raises(ValueError, match="at least one resolved chain"):
         TCRClonotype(
-            sample_id="pt-001", cdr3_alpha=None, v_gene_alpha=None, j_gene_alpha=None,
-            cdr3_beta=None, v_gene_beta=None, j_gene_beta=None,
-            umi_count=5, clonal_frequency=1.0,
+            sample_id="pt-001",
+            cdr3_alpha=None,
+            v_gene_alpha=None,
+            j_gene_alpha=None,
+            cdr3_beta=None,
+            v_gene_beta=None,
+            j_gene_beta=None,
+            umi_count=5,
+            clonal_frequency=1.0,
         )
 
 
@@ -123,11 +163,14 @@ def test_parse_adaptive_immunoseq_is_stubbed() -> None:
 def test_repertoire_summary(tmp_path: Path) -> None:
     """Summary statistics are computed correctly, including the paired count."""
     csv_path = tmp_path / "contigs.csv"
-    _write_10x_csv(csv_path, [
-        _contig_row("TRB", "TRBV19", "TRBJ2-7", "CASSIRSSYEQYF", 12, "clonotype4"),
-        _contig_row("TRA", "TRAV38-2/DV8", "TRAJ52", "CAYRSAQGGSEKLVF", 10, "clonotype4"),
-        _contig_row("TRB", "TRBV7-2", "TRBJ1-1", "CASSPGQGAYEQYF", 3, "clonotype2"),
-    ])
+    _write_10x_csv(
+        csv_path,
+        [
+            _contig_row("TRB", "TRBV19", "TRBJ2-7", "CASSIRSSYEQYF", 12, "clonotype4"),
+            _contig_row("TRA", "TRAV38-2/DV8", "TRAJ52", "CAYRSAQGGSEKLVF", 10, "clonotype4"),
+            _contig_row("TRB", "TRBV7-2", "TRBJ1-1", "CASSPGQGAYEQYF", 3, "clonotype2"),
+        ],
+    )
     clonotypes = parse_10x_vdj(csv_path, sample_id="pt-001")
 
     summary = repertoire_summary(clonotypes)
@@ -141,8 +184,11 @@ def test_repertoire_summary_empty_input() -> None:
     """An empty clonotype list returns zeroed-out summary stats, not an error."""
     summary = repertoire_summary([])
     assert summary == {
-        "n_clonotypes": 0, "n_paired": 0,
-        "total_umis": 0, "top_clone_frequency": 0.0, "n_unique_v_genes_beta": 0,
+        "n_clonotypes": 0,
+        "n_paired": 0,
+        "total_umis": 0,
+        "top_clone_frequency": 0.0,
+        "n_unique_v_genes_beta": 0,
     }
 
 

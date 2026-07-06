@@ -34,8 +34,16 @@ from mimicry_discovery.structure.base import (
 )
 
 _TARGETS_TSV_COLUMNS = [
-    "organism", "mhc_class", "mhc", "peptide",
-    "va", "ja", "cdr3a", "vb", "jb", "cdr3b",
+    "organism",
+    "mhc_class",
+    "mhc",
+    "peptide",
+    "va",
+    "ja",
+    "cdr3a",
+    "vb",
+    "jb",
+    "cdr3b",
 ]
 
 
@@ -102,9 +110,7 @@ class TCRDockPredictor(StructurePredictor):
         self.alphafold_data_dir = Path(alphafold_data_dir)
         self.model_name = model_name
 
-    def _write_targets_tsv(
-        self, request: StructurePredictionRequest, targets_path: Path
-    ) -> None:
+    def _write_targets_tsv(self, request: StructurePredictionRequest, targets_path: Path) -> None:
         """Write TCRdock's required 10-column targets TSV for one request.
 
         Args:
@@ -126,18 +132,20 @@ class TCRDockPredictor(StructurePredictor):
         with targets_path.open("w", newline="") as fh:
             writer = csv.writer(fh, delimiter="\t")
             writer.writerow(_TARGETS_TSV_COLUMNS)
-            writer.writerow([
-                request.organism,
-                request.mhc_class,
-                _to_tcrdock_mhc_string(request.hla_allele),
-                request.peptide,
-                request.tcr_v_gene_alpha,
-                request.tcr_j_gene_alpha,
-                request.tcr_cdr3_alpha,
-                request.tcr_v_gene,
-                request.tcr_j_gene,
-                request.tcr_cdr3_beta,
-            ])
+            writer.writerow(
+                [
+                    request.organism,
+                    request.mhc_class,
+                    _to_tcrdock_mhc_string(request.hla_allele),
+                    request.peptide,
+                    request.tcr_v_gene_alpha,
+                    request.tcr_j_gene_alpha,
+                    request.tcr_cdr3_alpha,
+                    request.tcr_v_gene,
+                    request.tcr_j_gene,
+                    request.tcr_cdr3_beta,
+                ]
+            )
 
     def predict(self, request: StructurePredictionRequest) -> StructurePredictionResult:
         """Predict a TCR-pMHC complex structure using TCRdock.
@@ -169,9 +177,12 @@ class TCRDockPredictor(StructurePredictor):
         setup_dir = self.output_dir / "setup"
         subprocess.run(
             [
-                "python", str(self.tcrdock_dir / "setup_for_alphafold.py"),
-                "--targets_tsvfile", str(targets_path),
-                "--output_dir", str(setup_dir),
+                "python",
+                str(self.tcrdock_dir / "setup_for_alphafold.py"),
+                "--targets_tsvfile",
+                str(targets_path),
+                "--output_dir",
+                str(setup_dir),
             ],
             check=True,
             cwd=self.tcrdock_dir,
@@ -180,11 +191,16 @@ class TCRDockPredictor(StructurePredictor):
         outfile_prefix = str(self.output_dir / "prediction")
         subprocess.run(
             [
-                "python", str(self.tcrdock_dir / "run_prediction.py"),
-                "--targets", str(setup_dir / "targets.tsv"),
-                "--outfile_prefix", outfile_prefix,
-                "--model_names", self.model_name,
-                "--data_dir", str(self.alphafold_data_dir),
+                "python",
+                str(self.tcrdock_dir / "run_prediction.py"),
+                "--targets",
+                str(setup_dir / "targets.tsv"),
+                "--outfile_prefix",
+                outfile_prefix,
+                "--model_names",
+                self.model_name,
+                "--data_dir",
+                str(self.alphafold_data_dir),
             ],
             check=True,
             cwd=self.tcrdock_dir,
