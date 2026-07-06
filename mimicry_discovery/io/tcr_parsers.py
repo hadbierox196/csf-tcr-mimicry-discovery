@@ -42,6 +42,7 @@ class _ClonotypeFields(TypedDict):
     j_gene_beta: str | None
     umi_count: int
 
+
 _VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
 
 
@@ -201,9 +202,7 @@ def parse_10x_vdj(
         for chain in ("TRA", "TRB"):
             chain_rows = group[group["chain"] == chain]
             if not chain_rows.empty:
-                chain_repr[chain] = cast(
-                    "pd.Series", chain_rows.loc[chain_rows["umis"].idxmax()]
-                )
+                chain_repr[chain] = cast("pd.Series", chain_rows.loc[chain_rows["umis"].idxmax()])
 
         if not chain_repr:
             continue  # neither chain survived QC for this clonotype
