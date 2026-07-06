@@ -17,7 +17,6 @@ automatically -- no rule change needed.
 
 from __future__ import annotations
 
-import dataclasses
 import itertools
 import json
 import logging

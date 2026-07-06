@@ -171,7 +171,7 @@ def parse_10x_vdj(
     df = df[df["chain"].isin(["TRA", "TRB"])]  # ignore TRG/TRD/multi/etc.
 
     clonotypes: list[TCRClonotype] = []
-    for clonotype_id, group in df.groupby("raw_clonotype_id"):
+    for _clonotype_id, group in df.groupby("raw_clonotype_id"):
         chain_repr: dict[str, pd.Series] = {}
         for chain in ("TRA", "TRB"):
             chain_rows = group[group["chain"] == chain]

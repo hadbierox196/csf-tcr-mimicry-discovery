@@ -1,6 +1,6 @@
-"""Extraction of interface confidence and geometry metrics from a
-predicted TCR-pMHC complex structure (PDB format).
+"""Extraction of interface confidence and geometry metrics.
 
+From a predicted TCR-pMHC complex structure (PDB format).
 Implements a minimal, dependency-free PDB ATOM-record reader rather than
 depending on BioPython for this narrow task. Follows the standard PDB
 fixed-column convention. AlphaFold-family models (and PyMOL/ChimeraX

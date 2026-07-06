@@ -11,14 +11,12 @@ import csv
 import importlib.util
 import json
 import logging
-import sys
 from pathlib import Path
 from types import ModuleType
 
 import pytest
 
 from mimicry_discovery.config import QcThresholds, ScoringConfig, StructurePredictionConfig
-from mimicry_discovery.self_antigen.build_reference import SelfPeptide
 
 _SCRIPTS_DIR = Path(__file__).resolve().parents[2] / "workflow" / "scripts"
 _FIXTURE_DIR = Path(__file__).resolve().parents[2] / "data" / "test"
