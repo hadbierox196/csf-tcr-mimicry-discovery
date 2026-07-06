@@ -56,7 +56,9 @@ def current_git_sha(repo_dir: Path | str = ".") -> str | None:
     try:
         result = subprocess.run(
             ["git", "-C", str(repo_dir), "rev-parse", "HEAD"],
-            capture_output=True, text=True, check=True,
+            capture_output=True,
+            text=True,
+            check=True,
         )
     except (subprocess.CalledProcessError, FileNotFoundError):
         return None

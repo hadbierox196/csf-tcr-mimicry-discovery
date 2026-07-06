@@ -148,20 +148,22 @@ def parse_10x_vdj(
     qc = qc or QcThresholds()
     contig_annotations_path = Path(contig_annotations_path)
     if not contig_annotations_path.exists():
-        raise FileNotFoundError(
-            f"10x contig annotation file not found: {contig_annotations_path}"
-        )
+        raise FileNotFoundError(f"10x contig annotation file not found: {contig_annotations_path}")
 
     df = pd.read_csv(contig_annotations_path)
     required_cols = {
-        "chain", "v_gene", "j_gene", "cdr3", "productive",
-        "high_confidence", "umis", "raw_clonotype_id",
+        "chain",
+        "v_gene",
+        "j_gene",
+        "cdr3",
+        "productive",
+        "high_confidence",
+        "umis",
+        "raw_clonotype_id",
     }
     missing = required_cols - set(df.columns)
     if missing:
-        raise ValueError(
-            f"Input file is missing expected 10x VDJ columns: {sorted(missing)}"
-        )
+        raise ValueError(f"Input file is missing expected 10x VDJ columns: {sorted(missing)}")
 
     if qc.require_productive:
         df = df[df["productive"].astype(str).str.lower() == "true"]
@@ -262,8 +264,11 @@ def repertoire_summary(clonotypes: list[TCRClonotype]) -> dict[str, float | int]
     """
     if not clonotypes:
         return {
-            "n_clonotypes": 0, "n_paired": 0, "total_umis": 0,
-            "top_clone_frequency": 0.0, "n_unique_v_genes_beta": 0,
+            "n_clonotypes": 0,
+            "n_paired": 0,
+            "total_umis": 0,
+            "top_clone_frequency": 0.0,
+            "n_unique_v_genes_beta": 0,
         }
     beta_v_genes = {c.v_gene_beta for c in clonotypes if c.v_gene_beta is not None}
     return {
@@ -273,4 +278,3 @@ def repertoire_summary(clonotypes: list[TCRClonotype]) -> dict[str, float | int]
         "top_clone_frequency": max(c.clonal_frequency for c in clonotypes),
         "n_unique_v_genes_beta": len(beta_v_genes),
     }
-

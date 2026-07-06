@@ -39,14 +39,11 @@ def _validate_equal_length(peptide_a: str, peptide_b: str, fn_name: str) -> None
     """
     if len(peptide_a) != len(peptide_b):
         raise ValueError(
-            f"{fn_name} requires equal-length peptides, got "
-            f"{len(peptide_a)} and {len(peptide_b)}."
+            f"{fn_name} requires equal-length peptides, got {len(peptide_a)} and {len(peptide_b)}."
         )
 
 
-def peptide_similarity(
-    peptide_a: str, peptide_b: str, property_match_credit: float = 0.5
-) -> float:
+def peptide_similarity(peptide_a: str, peptide_b: str, property_match_credit: float = 0.5) -> float:
     """Score similarity between two equal-length peptides.
 
     Used to compare a tumor-derived peptide against a candidate
@@ -126,8 +123,7 @@ def anchor_conservation(
         index = pos - 1 if pos > 0 else length + pos
         if not 0 <= index < length:
             raise ValueError(
-                f"Anchor position {pos} is out of range for a peptide of "
-                f"length {length}."
+                f"Anchor position {pos} is out of range for a peptide of length {length}."
             )
         if peptide_a[index] == peptide_b[index]:
             matches += 1

@@ -105,15 +105,37 @@ def test_candidate_pairing_with_no_reference_yields_zero_candidates(
     """No self-peptide reference yet -> zero candidates, not a crash."""
     clonotypes_path = tmp_path / "c.json"
     neoantigens_path = tmp_path / "n.json"
-    clonotypes_path.write_text(json.dumps([{
-        "sample_id": "s1", "cdr3_alpha": None, "v_gene_alpha": None, "j_gene_alpha": None,
-        "cdr3_beta": "AAA", "v_gene_beta": "V1", "j_gene_beta": "J1",
-        "umi_count": 5, "clonal_frequency": 1.0,
-    }]))
-    neoantigens_path.write_text(json.dumps([{
-        "sample_id": "s1", "peptide": "SLLMWITQC", "hla_allele": "HLA-A*02:01",
-        "wildtype_peptide": None, "gene_name": "TP53", "binding_affinity_nm": 40.0,
-    }]))
+    clonotypes_path.write_text(
+        json.dumps(
+            [
+                {
+                    "sample_id": "s1",
+                    "cdr3_alpha": None,
+                    "v_gene_alpha": None,
+                    "j_gene_alpha": None,
+                    "cdr3_beta": "AAA",
+                    "v_gene_beta": "V1",
+                    "j_gene_beta": "J1",
+                    "umi_count": 5,
+                    "clonal_frequency": 1.0,
+                }
+            ]
+        )
+    )
+    neoantigens_path.write_text(
+        json.dumps(
+            [
+                {
+                    "sample_id": "s1",
+                    "peptide": "SLLMWITQC",
+                    "hla_allele": "HLA-A*02:01",
+                    "wildtype_peptide": None,
+                    "gene_name": "TP53",
+                    "binding_affinity_nm": 40.0,
+                }
+            ]
+        )
+    )
     candidates_out = tmp_path / "candidates.json"
 
     with caplog.at_level(logging.WARNING):
@@ -135,26 +157,70 @@ def test_candidate_pairing_with_reference_generates_full_cross_product(
     that shares HLA allele and peptide length becomes a candidate."""
     clonotypes_path = tmp_path / "c.json"
     neoantigens_path = tmp_path / "n.json"
-    clonotypes_path.write_text(json.dumps([
-        {"sample_id": "s1", "cdr3_alpha": None, "v_gene_alpha": None, "j_gene_alpha": None,
-         "cdr3_beta": "AAA", "v_gene_beta": "V1", "j_gene_beta": "J1",
-         "umi_count": 5, "clonal_frequency": 0.5},
-        {"sample_id": "s1", "cdr3_alpha": None, "v_gene_alpha": None, "j_gene_alpha": None,
-         "cdr3_beta": "BBB", "v_gene_beta": "V2", "j_gene_beta": "J2",
-         "umi_count": 5, "clonal_frequency": 0.5},
-    ]))
-    neoantigens_path.write_text(json.dumps([
-        {"sample_id": "s1", "peptide": "SLLMWITQC", "hla_allele": "HLA-A*02:01",
-         "wildtype_peptide": None, "gene_name": "TP53", "binding_affinity_nm": 40.0},
-        {"sample_id": "s1", "peptide": "GLATEKSRW", "hla_allele": "HLA-A*02:01",
-         "wildtype_peptide": None, "gene_name": "BRAF", "binding_affinity_nm": 45.0},
-    ]))
+    clonotypes_path.write_text(
+        json.dumps(
+            [
+                {
+                    "sample_id": "s1",
+                    "cdr3_alpha": None,
+                    "v_gene_alpha": None,
+                    "j_gene_alpha": None,
+                    "cdr3_beta": "AAA",
+                    "v_gene_beta": "V1",
+                    "j_gene_beta": "J1",
+                    "umi_count": 5,
+                    "clonal_frequency": 0.5,
+                },
+                {
+                    "sample_id": "s1",
+                    "cdr3_alpha": None,
+                    "v_gene_alpha": None,
+                    "j_gene_alpha": None,
+                    "cdr3_beta": "BBB",
+                    "v_gene_beta": "V2",
+                    "j_gene_beta": "J2",
+                    "umi_count": 5,
+                    "clonal_frequency": 0.5,
+                },
+            ]
+        )
+    )
+    neoantigens_path.write_text(
+        json.dumps(
+            [
+                {
+                    "sample_id": "s1",
+                    "peptide": "SLLMWITQC",
+                    "hla_allele": "HLA-A*02:01",
+                    "wildtype_peptide": None,
+                    "gene_name": "TP53",
+                    "binding_affinity_nm": 40.0,
+                },
+                {
+                    "sample_id": "s1",
+                    "peptide": "GLATEKSRW",
+                    "hla_allele": "HLA-A*02:01",
+                    "wildtype_peptide": None,
+                    "gene_name": "BRAF",
+                    "binding_affinity_nm": 45.0,
+                },
+            ]
+        )
+    )
     reference_dir = tmp_path / "reference"
     reference_dir.mkdir()
-    (reference_dir / "neuronal_self_peptidome.json").write_text(json.dumps([
-        {"peptide": "SLLMWITQC", "hla_allele": "HLA-A*02:01",
-         "source_gene": "MBP", "evidence": "predicted"},
-    ]))
+    (reference_dir / "neuronal_self_peptidome.json").write_text(
+        json.dumps(
+            [
+                {
+                    "peptide": "SLLMWITQC",
+                    "hla_allele": "HLA-A*02:01",
+                    "source_gene": "MBP",
+                    "evidence": "predicted",
+                },
+            ]
+        )
+    )
     candidates_out = tmp_path / "candidates.json"
 
     candidate_pairing_script.main(
@@ -176,11 +242,22 @@ def test_structure_prediction_smoke_test_mode(
 ) -> None:
     """smoke_test=True substitutes a fixed placeholder, never the real backend."""
     candidates_path = tmp_path / "candidates.json"
-    candidates_path.write_text(json.dumps([{
-        "sample_id": "s1", "tcr_cdr3_beta": "AAA", "tcr_v_gene": "V1", "tcr_j_gene": "J1",
-        "tumor_peptide": "SLLMWITQV", "self_peptide": "SLLMWITQC",
-        "hla_allele": "HLA-A*02:01", "source_gene": "MBP",
-    }]))
+    candidates_path.write_text(
+        json.dumps(
+            [
+                {
+                    "sample_id": "s1",
+                    "tcr_cdr3_beta": "AAA",
+                    "tcr_v_gene": "V1",
+                    "tcr_j_gene": "J1",
+                    "tumor_peptide": "SLLMWITQV",
+                    "self_peptide": "SLLMWITQC",
+                    "hla_allele": "HLA-A*02:01",
+                    "source_gene": "MBP",
+                }
+            ]
+        )
+    )
     results_out = tmp_path / "results.json"
 
     structure_prediction_script.main(
@@ -197,7 +274,8 @@ def test_structure_prediction_smoke_test_mode(
 
 
 def test_structure_prediction_production_mode_raises_not_implemented(
-    tmp_path: Path, structure_prediction_script: ModuleType,
+    tmp_path: Path,
+    structure_prediction_script: ModuleType,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Without smoke_test, the real backend is invoked -- with subprocess
@@ -206,12 +284,25 @@ def test_structure_prediction_production_mode_raises_not_implemented(
     wired output-parsing step. Expected, not a bug, until roadmap
     Sprint 2/3 lands."""
     candidates_path = tmp_path / "candidates.json"
-    candidates_path.write_text(json.dumps([{
-        "sample_id": "s1", "tcr_cdr3_beta": "AAA", "tcr_v_gene": "V1", "tcr_j_gene": "J1",
-        "tcr_cdr3_alpha": "CAA", "tcr_v_gene_alpha": "VA1", "tcr_j_gene_alpha": "JA1",
-        "tumor_peptide": "SLLMWITQV", "self_peptide": "SLLMWITQC",
-        "hla_allele": "HLA-A*02:01", "source_gene": "MBP",
-    }]))
+    candidates_path.write_text(
+        json.dumps(
+            [
+                {
+                    "sample_id": "s1",
+                    "tcr_cdr3_beta": "AAA",
+                    "tcr_v_gene": "V1",
+                    "tcr_j_gene": "J1",
+                    "tcr_cdr3_alpha": "CAA",
+                    "tcr_v_gene_alpha": "VA1",
+                    "tcr_j_gene_alpha": "JA1",
+                    "tumor_peptide": "SLLMWITQV",
+                    "self_peptide": "SLLMWITQC",
+                    "hla_allele": "HLA-A*02:01",
+                    "source_gene": "MBP",
+                }
+            ]
+        )
+    )
     monkeypatch.setattr(
         "mimicry_discovery.structure.tcrdock_adapter.subprocess.run",
         lambda *args, **kwargs: None,
@@ -232,14 +323,32 @@ def test_risk_scoring_ranks_candidates_descending(
 ) -> None:
     """risk_scoring.main() scores every candidate and sorts descending."""
     structure_results_path = tmp_path / "structure_results.json"
-    structure_results_path.write_text(json.dumps([
-        {"sample_id": "s1", "tcr_cdr3_beta": "A", "tumor_peptide": "SLLMWITQV",
-         "self_peptide": "SLLMWITQC", "hla_allele": "HLA-A*02:01", "source_gene": "MBP",
-         "structural_confidence": 0.8, "backend": "smoke_test_placeholder"},
-        {"sample_id": "s1", "tcr_cdr3_beta": "B", "tumor_peptide": "GPDEAKPRW",
-         "self_peptide": "DDDDDDDDD", "hla_allele": "HLA-A*02:01", "source_gene": "MOG",
-         "structural_confidence": 0.1, "backend": "smoke_test_placeholder"},
-    ]))
+    structure_results_path.write_text(
+        json.dumps(
+            [
+                {
+                    "sample_id": "s1",
+                    "tcr_cdr3_beta": "A",
+                    "tumor_peptide": "SLLMWITQV",
+                    "self_peptide": "SLLMWITQC",
+                    "hla_allele": "HLA-A*02:01",
+                    "source_gene": "MBP",
+                    "structural_confidence": 0.8,
+                    "backend": "smoke_test_placeholder",
+                },
+                {
+                    "sample_id": "s1",
+                    "tcr_cdr3_beta": "B",
+                    "tumor_peptide": "GPDEAKPRW",
+                    "self_peptide": "DDDDDDDDD",
+                    "hla_allele": "HLA-A*02:01",
+                    "source_gene": "MOG",
+                    "structural_confidence": 0.1,
+                    "backend": "smoke_test_placeholder",
+                },
+            ]
+        )
+    )
     risk_scores_out = tmp_path / "risk_scores.json"
 
     risk_scoring_script.main(
@@ -259,14 +368,34 @@ def test_wetlab_export_writes_top_n_as_csv(
 ) -> None:
     """wetlab_export.main() writes exactly top_n rows as a tetramer-order CSV."""
     risk_scores_path = tmp_path / "risk_scores.json"
-    risk_scores_path.write_text(json.dumps([
-        {"sample_id": "s1", "tcr_cdr3_beta": "A", "tcr_v_gene": "V1", "tcr_j_gene": "J1",
-         "self_peptide": "PEP1", "hla_allele": "HLA-A*02:01", "source_gene": "MBP",
-         "risk_score": 0.9, "is_high_risk": True},
-        {"sample_id": "s1", "tcr_cdr3_beta": "B", "tcr_v_gene": "V2", "tcr_j_gene": "J2",
-         "self_peptide": "PEP2", "hla_allele": "HLA-A*02:01", "source_gene": "MOG",
-         "risk_score": 0.3, "is_high_risk": False},
-    ]))
+    risk_scores_path.write_text(
+        json.dumps(
+            [
+                {
+                    "sample_id": "s1",
+                    "tcr_cdr3_beta": "A",
+                    "tcr_v_gene": "V1",
+                    "tcr_j_gene": "J1",
+                    "self_peptide": "PEP1",
+                    "hla_allele": "HLA-A*02:01",
+                    "source_gene": "MBP",
+                    "risk_score": 0.9,
+                    "is_high_risk": True,
+                },
+                {
+                    "sample_id": "s1",
+                    "tcr_cdr3_beta": "B",
+                    "tcr_v_gene": "V2",
+                    "tcr_j_gene": "J2",
+                    "self_peptide": "PEP2",
+                    "hla_allele": "HLA-A*02:01",
+                    "source_gene": "MOG",
+                    "risk_score": 0.3,
+                    "is_high_risk": False,
+                },
+            ]
+        )
+    )
     export_out = tmp_path / "export.csv"
 
     wetlab_export_script.main(

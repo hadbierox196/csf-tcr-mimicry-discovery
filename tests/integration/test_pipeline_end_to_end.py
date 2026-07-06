@@ -65,17 +65,15 @@ def test_ingest_stage_parses_and_qcs_the_bundled_fixtures(
     neoantigen weak enough (812nM) to be dropped by the default
     affinity cutoff.
     """
-    clonotypes = parse_10x_vdj(
-        tcr_fixture_path, sample_id="synthetic-pt-001", qc=QcThresholds()
-    )
-    neoantigens = parse_pvacseq_report(
-        neoantigen_fixture_path, sample_id="synthetic-pt-001"
-    )
+    clonotypes = parse_10x_vdj(tcr_fixture_path, sample_id="synthetic-pt-001", qc=QcThresholds())
+    neoantigens = parse_pvacseq_report(neoantigen_fixture_path, sample_id="synthetic-pt-001")
 
     assert len(clonotypes) == 3  # the non-productive/low-confidence contigs are dropped
     assert len(neoantigens) == 2  # the 812nM KRAS call is dropped by the affinity cutoff
     assert {c.cdr3_beta for c in clonotypes} == {
-        "CASSLGQGNTIYF", "CASSPGQGAYEQYF", "CASSIRSSYEQYF",
+        "CASSLGQGNTIYF",
+        "CASSPGQGAYEQYF",
+        "CASSIRSSYEQYF",
     }
     assert {n.gene_name for n in neoantigens} == {"TP53", "BRAF"}
 
@@ -95,9 +93,7 @@ def test_scoring_stage_runs_end_to_end_and_ranks_candidates(
     arbitrary dummy data), since point-mutation neoepitopes are
     guaranteed equal length to their wild-type counterpart.
     """
-    neoantigens = parse_pvacseq_report(
-        neoantigen_fixture_path, sample_id="synthetic-pt-001"
-    )
+    neoantigens = parse_pvacseq_report(neoantigen_fixture_path, sample_id="synthetic-pt-001")
     scoring_config = ScoringConfig()
 
     results: list[tuple[str, MimicryRiskResult]] = []

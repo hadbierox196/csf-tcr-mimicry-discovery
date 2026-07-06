@@ -10,8 +10,11 @@ from mimicry_discovery.structure.base import StructurePredictionRequest
 from mimicry_discovery.structure.esmfold_adapter import ESMFoldPredictor
 
 _REQUEST = StructurePredictionRequest(
-    tcr_cdr3_beta="CASSIRSSYEQYF", tcr_v_gene="TRBV19", tcr_j_gene="TRBJ2-7",
-    peptide="SLLMWITQV", hla_allele="HLA-A*02:01",
+    tcr_cdr3_beta="CASSIRSSYEQYF",
+    tcr_v_gene="TRBV19",
+    tcr_j_gene="TRBJ2-7",
+    peptide="SLLMWITQV",
+    hla_allele="HLA-A*02:01",
 )
 
 

@@ -28,4 +28,3 @@ def tmp_config(tmp_path: Path) -> PipelineConfig:
             output_dir=tmp_path / "output",
         )
     )
-

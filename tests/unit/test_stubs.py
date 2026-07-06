@@ -46,16 +46,22 @@ def test_find_self_peptides_for_allele_filters_correctly() -> None:
     """The (already implemented) allele-query helper filters exactly."""
     reference = [
         SelfPeptide(
-            peptide="AAAAAAAAA", hla_allele="HLA-A*02:01",
-            source_gene="MBP", evidence="predicted",
+            peptide="AAAAAAAAA",
+            hla_allele="HLA-A*02:01",
+            source_gene="MBP",
+            evidence="predicted",
         ),
         SelfPeptide(
-            peptide="BBBBBBBBB", hla_allele="HLA-A*03:01",
-            source_gene="MOG", evidence="predicted",
+            peptide="BBBBBBBBB",
+            hla_allele="HLA-A*03:01",
+            source_gene="MOG",
+            evidence="predicted",
         ),
         SelfPeptide(
-            peptide="CCCCCCC", hla_allele="HLA-A*02:01",
-            source_gene="GFAP", evidence="ms_confirmed",
+            peptide="CCCCCCC",
+            hla_allele="HLA-A*02:01",
+            source_gene="GFAP",
+            evidence="ms_confirmed",
         ),
     ]
     matches = find_self_peptides_for_allele("HLA-A*02:01", reference)
@@ -66,12 +72,16 @@ def test_find_self_peptides_by_length_filters_correctly() -> None:
     """The length-query helper returns only peptides of the exact length."""
     reference = [
         SelfPeptide(
-            peptide="AAAAAAAAA", hla_allele="HLA-A*02:01",
-            source_gene="MBP", evidence="predicted",
+            peptide="AAAAAAAAA",
+            hla_allele="HLA-A*02:01",
+            source_gene="MBP",
+            evidence="predicted",
         ),
         SelfPeptide(
-            peptide="BBBBBBB", hla_allele="HLA-A*02:01",
-            source_gene="MOG", evidence="predicted",
+            peptide="BBBBBBB",
+            hla_allele="HLA-A*02:01",
+            source_gene="MOG",
+            evidence="predicted",
         ),
     ]
     matches = find_self_peptides_by_length(9, reference)
@@ -116,7 +126,11 @@ def test_write_provenance_manifest_contains_expected_keys(tmp_path: Path) -> Non
     assert manifest_path.exists()
     manifest = json.loads(manifest_path.read_text())
     assert set(manifest) == {
-        "timestamp_utc", "git_sha", "input_hashes", "tool_versions", "extra",
+        "timestamp_utc",
+        "git_sha",
+        "input_hashes",
+        "tool_versions",
+        "extra",
     }
     assert manifest["tool_versions"] == {"pandas": "2.2.0"}
 

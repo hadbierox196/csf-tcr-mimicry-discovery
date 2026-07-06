@@ -14,8 +14,17 @@ from mimicry_discovery.structure.interface_metrics import (
 
 
 def _fmt_atom_line(
-    serial: int, name: str, res_name: str, chain_id: str, res_seq: int,
-    x: float, y: float, z: float, occupancy: float, b_factor: float, element: str,
+    serial: int,
+    name: str,
+    res_name: str,
+    chain_id: str,
+    res_seq: int,
+    x: float,
+    y: float,
+    z: float,
+    occupancy: float,
+    b_factor: float,
+    element: str,
 ) -> str:
     """Format a single fixed-width PDB ATOM record for test fixtures."""
     return (

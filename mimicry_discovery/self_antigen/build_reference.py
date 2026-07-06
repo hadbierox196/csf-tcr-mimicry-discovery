@@ -54,6 +54,4 @@ def build_neuronal_self_peptidome(
             immunopeptidomics resource, or an HLA-binding-prediction
             fallback over neuronal-expressed transcripts.
     """
-    raise NotImplementedError(
-        "build_neuronal_self_peptidome is a stub -- see module docstring."
-    )
+    raise NotImplementedError("build_neuronal_self_peptidome is a stub -- see module docstring.")
