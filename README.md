@@ -17,11 +17,11 @@
 
 | Stage | State |
 |---|---|
-| `io` — TCR-seq / neoantigen / HLA parsing | ✅ Implemented + tested |
-| `scoring` — mimicry risk score | ✅ Implemented + tested (rule-based; learned-model swap-in point ready) |
-| `structure` — TCRdock / ESMFold / AlphaFold-Multimer adapters | 🚧 Scaffolded — interface + tests done, model calls marked `TODO` |
-| `workflow/` — Snakemake orchestration | 🚧 Not yet added (tracked separately) |
-| `wetlab/` — tetramer validation loop | 🚧 Planned |
+| `io` — TCR-seq / neoantigen / HLA parsing |  Implemented + tested |
+| `scoring` — mimicry risk score | Implemented + tested (rule-based; learned-model swap-in point ready) |
+| `structure` — TCRdock / ESMFold / AlphaFold-Multimer adapters |  Scaffolded — interface + tests done, model calls marked `TODO` |
+| `workflow/` — Snakemake orchestration |  Not yet added (tracked separately) |
+| `wetlab/` — tetramer validation loop |  Planned |
 
 The smoke test below runs everything in the first two rows end-to-end against bundled synthetic fixtures — no GPU, no real patient data required.
 
@@ -77,7 +77,7 @@ design phase 1 (`docs/adr/`) — condensed version [below](#repository-layout).
 Local (no Docker), clone to smoke test in under 10 minutes:
 
 ```bash
-git clone https://github.com/YOUR-ORG/csf-tcr-mimicry-discovery.git
+git clone https://github.com/hadbierox196/csf-tcr-mimicry-discovery.git
 cd csf-tcr-mimicry-discovery
 
 python3 -m venv .venv && source .venv/bin/activate
@@ -143,9 +143,9 @@ For a manual BibTeX entry:
   title   = {Cross-Reactive Autoimmunity Discovery: Structure-Based TCR-pMHC
              Modeling to Identify Occult Tumor-Neuronal Molecular Mimicry
              Driving Seronegative Paraneoplastic Neurodegeneration},
-  author  = {{Your Lab Name}},
+  author  = {{Hassan Farooq}},
   year    = {2026},
-  url     = {https://github.com/YOUR-ORG/csf-tcr-mimicry-discovery},
+  url     = {https://github.com/hadbierox196/csf-tcr-mimicry-discovery},
   version = {0.1.0}
 }
 ```
