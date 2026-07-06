@@ -144,3 +144,27 @@ def test_repertoire_summary_empty_input() -> None:
         "n_clonotypes": 0, "n_paired": 0,
         "total_umis": 0, "top_clone_frequency": 0.0, "n_unique_v_genes_beta": 0,
     }
+
+
+def test_parse_10x_vdj_ignores_unassigned_none_clonotype_id(tmp_path: Path) -> None:
+    """Contigs with raw_clonotype_id == "None" must not be merged into a
+    phantom clonotype, even if they came from otherwise-valid, high-UMI
+    contigs of different chains."""
+    csv_path = tmp_path / "contigs.csv"
+    _write_10x_csv(
+        csv_path,
+        [
+            _contig_row("TRA", "TRAV1-1", "TRAJ1", "CAVRDGGATNKLIF", 50, "None"),
+            _contig_row("TRB", "TRBV2", "TRBJ1-2", "CASSEATNTGELFF", 45, "None"),
+            _contig_row("TRB", "TRBV19", "TRBJ2-7", "CASSIRSSYEQYF", 12, "clonotype4"),
+            _contig_row("TRA", "TRAV38-2/DV8", "TRAJ52", "CAYRSAQGGSEKLVF", 10, "clonotype4"),
+        ],
+    )
+
+    clonotypes = parse_10x_vdj(csv_path, sample_id="pt-001", qc=QcThresholds())
+
+    assert len(clonotypes) == 1
+    clone = clonotypes[0]
+    assert clone.cdr3_alpha == "CAYRSAQGGSEKLVF"
+    assert clone.cdr3_beta == "CASSIRSSYEQYF"
+    assert clone.umi_count == 22

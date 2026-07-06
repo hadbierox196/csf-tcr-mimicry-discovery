@@ -169,6 +169,10 @@ def parse_10x_vdj(
         df = df[df["high_confidence"].astype(str).str.lower() == "true"]
     df = df[df["cdr3"].notna() & (df["cdr3"] != "None")]
     df = df[df["chain"].isin(["TRA", "TRB"])]  # ignore TRG/TRD/multi/etc.
+    # Cell Ranger marks contigs it couldn't confidently assign to a
+    # clonotype with raw_clonotype_id == "None". Left unfiltered, groupby
+    # would merge unrelated cells' contigs into one fictitious clonotype.
+    df = df[df["raw_clonotype_id"] != "None"]
 
     clonotypes: list[TCRClonotype] = []
     for _clonotype_id, group in df.groupby("raw_clonotype_id"):
