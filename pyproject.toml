@@ -19,6 +19,7 @@ dev = [
     "ruff>=0.4",
     "mypy>=1.9",
     "pandas-stubs",
+    "types-PyYAML",
 ]
 # TODO(scoring): add biopython>=1.83 here if/when
 # mimicry_discovery.scoring.features.peptide_similarity is upgraded from

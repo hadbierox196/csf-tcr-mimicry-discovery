@@ -197,7 +197,7 @@ def _dataclass_from_dict(cls: type[T], data: dict[str, Any]) -> T:
             kwargs[f.name] = _dataclass_from_dict(field_type, value)  # type: ignore[arg-type]
         else:
             kwargs[f.name] = value
-    return cls(**kwargs)  # type: ignore[return-value]
+    return cls(**kwargs)
 
 
 def load_config(config_path: Path | str) -> PipelineConfig:

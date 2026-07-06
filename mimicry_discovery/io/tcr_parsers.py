@@ -18,10 +18,29 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TypedDict, cast
 
 import pandas as pd
 
 from mimicry_discovery.config import QcThresholds
+
+
+class _ClonotypeFields(TypedDict):
+    """Intermediate, pre-QC-filtered fields for one clonotype.
+
+    Mirrors :class:`TCRClonotype`'s constructor fields minus
+    ``clonal_frequency``, which isn't known until after all clonotypes in
+    a sample have been aggregated.
+    """
+
+    sample_id: str
+    cdr3_alpha: str | None
+    v_gene_alpha: str | None
+    j_gene_alpha: str | None
+    cdr3_beta: str | None
+    v_gene_beta: str | None
+    j_gene_beta: str | None
+    umi_count: int
 
 _VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
 
@@ -176,13 +195,15 @@ def parse_10x_vdj(
     # would merge unrelated cells' contigs into one fictitious clonotype.
     df = df[df["raw_clonotype_id"] != "None"]
 
-    clonotypes: list[TCRClonotype] = []
+    clonotypes: list[_ClonotypeFields] = []
     for _clonotype_id, group in df.groupby("raw_clonotype_id"):
         chain_repr: dict[str, pd.Series] = {}
         for chain in ("TRA", "TRB"):
             chain_rows = group[group["chain"] == chain]
             if not chain_rows.empty:
-                chain_repr[chain] = chain_rows.loc[chain_rows["umis"].idxmax()]
+                chain_repr[chain] = cast(
+                    "pd.Series", chain_rows.loc[chain_rows["umis"].idxmax()]
+                )
 
         if not chain_repr:
             continue  # neither chain survived QC for this clonotype
@@ -204,7 +225,7 @@ def parse_10x_vdj(
         )
 
     grand_total_umis = sum(c["umi_count"] for c in clonotypes) or 1
-    result = []
+    result: list[TCRClonotype] = []
     for c in clonotypes:
         if c["umi_count"] < qc.min_umi_count:
             continue
