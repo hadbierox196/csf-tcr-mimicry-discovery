@@ -1,0 +1,15 @@
+name: mimicry-discovery-tcr-qc
+# NOTE: this lists mimicry_discovery's runtime deps directly rather than
+# `pip install -e <path-to-repo>`, since the relative path Snakemake would
+# resolve that against depends on internals I can't verify without a real
+# Snakemake+conda run (see the workflow build note in docs/roadmap.md).
+# The package itself is expected to already be installed in whichever
+# environment `snakemake` is invoked from (`pip install -e ".[dev]"`, per
+# the README quickstart) -- or use `container:` instead of `conda:` for a
+# fully self-contained environment (see containers/Dockerfile).
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pandas>=2.2
+  - pyyaml>=6.0

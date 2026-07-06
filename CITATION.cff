@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: >-
+  Cross-Reactive Autoimmunity Discovery: Structure-Based TCR-pMHC Modeling
+  to Identify Occult Tumor-Neuronal Molecular Mimicry Driving Seronegative
+  Paraneoplastic Neurodegeneration
+type: software
+authors:
+  - name: "Your Lab Name"
+    # TODO: replace with individual authors' family-names/given-names and
+    # ORCID iDs, or keep an organizational author if that's how your group
+    # credits software. See https://citation-file-format.github.io
+version: 0.1.0
+date-released: "2026-07-03"
+url: "https://github.com/YOUR-ORG/csf-tcr-mimicry-discovery"
+repository-code: "https://github.com/YOUR-ORG/csf-tcr-mimicry-discovery"
+license: Apache-2.0
+keywords:
+  - TCR-pMHC
+  - molecular mimicry
+  - paraneoplastic neurodegeneration
+  - structural bioinformatics
+  - computational immunology

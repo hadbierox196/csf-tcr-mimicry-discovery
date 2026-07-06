@@ -1,0 +1,9 @@
+name: mimicry-discovery-scoring
+# See the NOTE in envs/tcr_qc.yaml -- same reasoning applies here.
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy>=1.26
+  - scikit-learn>=1.4
+  - pyyaml>=6.0

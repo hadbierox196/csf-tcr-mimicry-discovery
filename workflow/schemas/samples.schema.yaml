@@ -1,0 +1,18 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+description: Schema for config/samples.tsv, validated at Snakefile parse time.
+type: object
+properties:
+  sample_id:
+    type: string
+    pattern: "^[A-Za-z0-9_-]+$"
+    description: De-identified sample/patient ID. No spaces or path separators.
+  tcr_vdj_path:
+    type: string
+    description: Path to that sample's 10x Cell Ranger V(D)J contig annotation CSV.
+  neoantigen_report_path:
+    type: string
+    description: Path to that sample's pVACseq aggregated/filtered TSV report.
+required:
+  - sample_id
+  - tcr_vdj_path
+  - neoantigen_report_path

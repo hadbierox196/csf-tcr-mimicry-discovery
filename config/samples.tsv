@@ -1,0 +1,2 @@
+sample_id	tcr_vdj_path	neoantigen_report_path
+synthetic-pt-001	data/test/synthetic_tcr_clonotypes.csv	data/test/synthetic_neoantigens.tsv

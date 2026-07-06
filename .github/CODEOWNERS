@@ -1,0 +1,25 @@
+# Code review routing. See CONTRIBUTING.md for why this split exists.
+# Replace the placeholder @YOUR-ORG/* handles with real GitHub
+# usernames or teams before relying on this.
+
+# Default: computational leads review anything not claimed more
+# specifically below.
+*                             @YOUR-ORG/computational-leads
+
+# Wet-lab validation: protocols, assay schemas, sample tracking.
+/wetlab/                      @YOUR-ORG/wetlab-leads
+
+# Computational core: package, tests, future pipeline orchestration.
+/mimicry_discovery/           @YOUR-ORG/computational-leads
+/workflow/                    @YOUR-ORG/computational-leads
+/tests/                       @YOUR-ORG/computational-leads
+/containers/                  @YOUR-ORG/computational-leads
+Dockerfile                    @YOUR-ORG/computational-leads
+docker-compose.yml            @YOUR-ORG/computational-leads
+
+# Data governance, licensing, and citation metadata need PI sign-off
+# regardless of which area of the repo they sit in.
+/DATA_GOVERNANCE.md           @YOUR-ORG/pi
+/LICENSE                      @YOUR-ORG/pi
+/CITATION.cff                 @YOUR-ORG/pi
+/docs/model_card.md           @YOUR-ORG/pi

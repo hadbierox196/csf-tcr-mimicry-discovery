@@ -1,0 +1,62 @@
+"""Entry point for the CSF TCR-pMHC molecular mimicry discovery pipeline.
+
+Usage:
+    # Dry run -- always do this first
+    snakemake --configfile config/config.yaml -n
+
+    # Smoke test against the bundled synthetic fixtures (no GPU, no real
+    # structure prediction -- see workflow/scripts/structure_prediction.py)
+    snakemake --configfile config/config.yaml --config smoke_test=true --cores 1
+
+    # Real run on SLURM
+    snakemake --configfile config/config.yaml --profile config/profiles/slurm
+
+    # Real run on cloud
+    snakemake --configfile config/config.yaml --profile config/profiles/cloud
+
+Config validation deliberately has two layers, not one: ``config.yaml``
+itself is validated by ``mimicry_discovery.config.load_config`` -- the
+exact same dataclass validation the Python package uses everywhere else,
+not a second parallel JSON-Schema that could drift out of sync (see the
+architecture rationale, section 2.2). ``config/samples.tsv`` has no
+Python dataclass equivalent, so it's validated the standard Snakemake way,
+via JSON-Schema and ``snakemake.utils.validate``.
+"""
+
+import pandas as pd
+from snakemake.utils import min_version, validate
+
+from mimicry_discovery.config import load_config
+
+min_version("8.0")
+
+configfile: "config/config.yaml"
+pipeline_config = load_config("config/config.yaml")
+
+samples = pd.read_csv(pipeline_config.paths.samples_tsv, sep="\t", dtype=str)
+validate(samples, schema="schemas/samples.schema.yaml")
+SAMPLE_IDS = samples["sample_id"].tolist()
+
+wildcard_constraints:
+    sample="|".join(SAMPLE_IDS) if SAMPLE_IDS else "NO_SAMPLES_DEFINED",
+
+
+include: "rules/01_ingest_qc.smk"
+include: "rules/02_candidate_pairing.smk"
+include: "rules/03_structure_prediction.smk"
+include: "rules/04_risk_scoring.smk"
+include: "rules/05_wetlab_export.smk"
+
+
+rule all:
+    input:
+        expand(rules.wetlab_export.output.export, sample=SAMPLE_IDS),
+
+
+rule dag_only:
+    """Convenience target: everything up to (not including) structure
+    prediction -- runnable today with zero config flags, since ingest_qc
+    and candidate_pairing need no stubbed backend. Useful for verifying
+    the ingest side of the DAG in isolation."""
+    input:
+        expand(rules.candidate_pairing.output.candidates, sample=SAMPLE_IDS),

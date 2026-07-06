@@ -1,0 +1,45 @@
+# Snakemake 8+ cloud executor profile, using Kubernetes as the
+# cloud-agnostic default (runs on GKE/EKS/AKS alike). If your team has
+# standardized on a single provider's managed batch service instead,
+# swap `executor: kubernetes` for `executor: googlebatch` or an AWS Batch
+# equivalent -- each has its own plugin and options; see
+# https://snakemake.github.io/snakemake-plugin-catalog
+#
+#   snakemake --configfile config/config.yaml --profile config/profiles/cloud
+#
+# Requires: pip install snakemake-executor-plugin-kubernetes snakemake-storage-plugin-s3
+#
+# Correction from the original architecture doc: Prompt 1 described a
+# separate `storage.yaml` for bucket mappings. Folded into this single
+# file instead -- `default-storage-prefix` below is the one bucket
+# mapping this profile needs; a second file would just split one setting
+# across two places for no benefit.
+
+executor: kubernetes
+kubernetes-namespace: mimicry-discovery   # TODO: set to your namespace
+jobs: 50
+
+# No shared filesystem between pods -- every rule's inputs/outputs route
+# through object storage instead. This is the key way this profile
+# differs from the SLURM one; rule code itself is unaware of the
+# difference (see the architecture rationale, section 2.3).
+default-storage-provider: s3
+default-storage-prefix: "s3://YOUR-BUCKET/mimicry-discovery"  # TODO: set to your bucket
+shared-fs-usage:
+  - none
+
+default-resources:
+  mem_mb: 8000
+
+set-resources:
+  structure_prediction:
+    mem_mb: 32000
+    gpu: 1
+    gpu_manufacturer: "nvidia"
+
+# Each rule's `container:` directive is the pod image on Kubernetes --
+# no separate software-deployment-method flag needed the way SLURM's
+# profile needs `apptainer`.
+
+latency-wait: 120
+retries: 2

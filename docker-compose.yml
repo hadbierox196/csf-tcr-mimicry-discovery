@@ -1,0 +1,60 @@
+# Local development / single-node use only. On HPC/SLURM, build the same
+# Dockerfile targets and convert to Singularity/Apptainer with
+# containers/singularity/build_sif.sh -- docker-compose itself doesn't run
+# on most HPC clusters (rootful daemon requirement), so it's not part of
+# that path, only the source-of-truth Dockerfile it builds from is shared.
+#
+# Usage:
+#   docker compose up scoring              # CPU-only pipeline stages
+#   docker compose up structure-prediction # requires the NVIDIA Container Toolkit
+#   docker compose run --rm dev            # interactive shell, live-mounted source
+
+services:
+  scoring:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: scoring
+    image: mimicry-discovery:scoring
+    volumes:
+      - ./config:/opt/mimicry-discovery/config:ro
+      - ./data:/opt/mimicry-discovery/data
+      - ./models:/opt/mimicry-discovery/models:ro
+    environment:
+      MIMICRY_CONFIG: /opt/mimicry-discovery/config/config.yaml
+
+  structure-prediction:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: structure-prediction
+    image: mimicry-discovery:structure-prediction
+    volumes:
+      - ./config:/opt/mimicry-discovery/config:ro
+      - ./data:/opt/mimicry-discovery/data
+      - ./models:/opt/mimicry-discovery/models:ro
+    environment:
+      MIMICRY_CONFIG: /opt/mimicry-discovery/config/config.yaml
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # Interactive container for local development: the whole repo is
+  # live-mounted (not copied at build time), so edits on the host are
+  # picked up immediately without a rebuild.
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: scoring
+    image: mimicry-discovery:dev
+    volumes:
+      - .:/opt/mimicry-discovery
+    working_dir: /opt/mimicry-discovery
+    entrypoint: ["bash"]
+    stdin_open: true
+    tty: true

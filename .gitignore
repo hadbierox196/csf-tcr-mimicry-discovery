@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+junit-*.xml
+
+# Snakemake
+.snakemake/
+
+# Data that must never be committed (see DATA_GOVERNANCE.md) --
+# data/test/ fixtures are the exception and stay tracked.
+data/raw/
+data/interim/
+data/processed/
+data/reference/*
+!data/reference/.gitkeep
+!data/reference/*.dvc
+models/*
+!models/.gitkeep
+!models/*.dvc
+!models/README.md
+
+# Local run outputs
+/results/
+
+# Secrets / local overrides
+.env
+*.local.yaml
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store

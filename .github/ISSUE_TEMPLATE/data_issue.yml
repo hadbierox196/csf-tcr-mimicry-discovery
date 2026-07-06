@@ -1,0 +1,42 @@
+name: Data issue
+description: Something about input data, a reference dataset, or a fixture looks wrong.
+title: "[Data]: "
+labels: ["data-quality"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not paste real patient data or identifiers here** — reference
+        the de-identified sample ID only, and see `DATA_GOVERNANCE.md` if
+        you're unsure whether something is safe to include. This form is
+        for describing a data-quality problem, not for sharing the data
+        itself.
+  - type: input
+    id: sample-id
+    attributes:
+      label: De-identified sample ID (if applicable)
+  - type: dropdown
+    id: dataset
+    attributes:
+      label: Which dataset?
+      options:
+        - CSF TCR-seq (data/raw or data/test fixture)
+        - Tumor neoantigen calls
+        - HLA typing
+        - data/reference (IMGT / HLA / PDB templates)
+        - Wet-lab assay results
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What looks wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What would you expect instead?
+    validations:
+      required: false

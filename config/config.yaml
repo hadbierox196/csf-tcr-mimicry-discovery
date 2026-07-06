@@ -1,0 +1,22 @@
+paths:
+  samples_tsv: config/samples.tsv
+  reference_dir: data/reference
+  models_dir: models
+  output_dir: data/processed
+
+qc:
+  min_umi_count: 2
+  min_clonal_frequency: 0.0001
+  require_productive: true
+  require_high_confidence: true
+
+structure_prediction:
+  backend: tcrdock
+  num_recycles: 3
+  device: cuda
+
+scoring:
+  peptide_similarity_weight: 0.4
+  structural_confidence_weight: 0.4
+  anchor_conservation_weight: 0.2
+  high_risk_threshold: 0.75

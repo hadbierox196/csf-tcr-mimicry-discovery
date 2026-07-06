@@ -1,0 +1,45 @@
+# Snakemake 8+ SLURM executor profile.
+#
+#   snakemake --configfile config/config.yaml --profile config/profiles/slurm
+#
+# Requires: pip install snakemake-executor-plugin-slurm
+#
+# Correction from the original architecture doc: Prompt 1 described a
+# separate `status-sacct.sh` cluster-status script. That was the
+# Snakemake 7-era pattern -- the snakemake-executor-plugin-slurm used
+# here polls sacct/squeue internally, so a standalone status script isn't
+# needed (or idiomatic) anymore. Noting this so it isn't tribal knowledge.
+
+executor: slurm
+jobs: 50  # max concurrent SLURM job submissions
+
+default-resources:
+  slurm_partition: "compute"       # TODO: set to your cluster's CPU partition
+  slurm_account: "your_account"    # TODO: set to your SLURM account
+  mem_mb: 8000
+  runtime: 60                      # minutes
+  tmpdir: "/scratch/$USER/tmp"     # TODO: confirm your cluster's scratch convention
+
+# Per-rule overrides -- structure_prediction is the only GPU-bound,
+# heavy-memory, long-running rule; everything else uses the defaults above.
+set-resources:
+  structure_prediction:
+    slurm_partition: "gpu"         # TODO: set to your cluster's GPU partition
+    slurm_extra: "'--gres=gpu:1'"
+    mem_mb: 32000
+    runtime: 240
+
+software-deployment-method: apptainer
+apptainer-args: "--nv --bind /scratch:/scratch"
+
+# This cluster has a shared filesystem across nodes, so persistence,
+# software deployment, and source files can all be assumed shared rather
+# than re-transferred per job.
+shared-fs-usage:
+  - persistence
+  - software-deployment
+  - sources
+  - source-cache
+
+latency-wait: 60   # NFS/Lustre metadata can lag; avoids spurious "missing output" errors
+retries: 1

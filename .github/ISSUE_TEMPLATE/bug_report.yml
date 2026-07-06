@@ -1,0 +1,43 @@
+name: Bug report
+description: Something in the pipeline or package isn't working as expected.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you run, and what went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen instead?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: mimicry-discovery version or commit SHA
+      placeholder: "0.1.0 / abc1234"
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Where did this happen?
+      options:
+        - Local (venv)
+        - Docker (scoring target)
+        - Docker (structure-prediction target)
+        - Singularity / HPC
+        - CI
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Paste the relevant error/traceback. Do not include real patient data or file paths that reveal it.
+      render: shell

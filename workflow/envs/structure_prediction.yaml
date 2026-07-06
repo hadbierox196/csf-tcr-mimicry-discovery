@@ -1,0 +1,14 @@
+name: mimicry-discovery-structure-prediction
+# See the NOTE in envs/tcr_qc.yaml -- same reasoning applies here. This
+# env intentionally does NOT pin torch/CUDA yet: the real backends
+# (TCRdock/ESMFold/AlphaFold-Multimer) are still scaffolded (roadmap
+# Sprints 2-3), so pinning heavy GPU-linked wheels now would need
+# revisiting anyway once a specific backend's actual version requirements
+# are known. Prefer `container:` (containers/Dockerfile's
+# structure-prediction target) over this conda env until then.
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - numpy>=1.26
+  - pyyaml>=6.0
