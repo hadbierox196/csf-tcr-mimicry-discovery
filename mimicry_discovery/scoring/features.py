@@ -87,7 +87,7 @@ def peptide_similarity(
 def anchor_conservation(
     peptide_a: str,
     peptide_b: str,
-    anchor_positions: tuple[int, ...] = (2, 9),
+    anchor_positions: tuple[int, ...] = (2, -1),
 ) -> float:
     """Fraction of HLA anchor positions that are identical between peptides.
 
@@ -104,7 +104,10 @@ def anchor_conservation(
         anchor_positions: 1-indexed anchor positions to compare (a
             negative value counts from the C-terminus, e.g. ``-1`` is
             the last residue). Defaults to the canonical HLA class I
-            P2/PΩ pair for a 9-mer. TODO(scoring): parameterize this
+            P2/PΩ (C-terminal) anchor pair, expressed as position 2 and
+            -1 so it is correct for any peptide length (previously
+            hardcoded to 9, which crashed on 8-mers and silently
+            mis-scored 10/11-mers). TODO(scoring): parameterize this
             per-allele using a real binding-motif reference rather than
             a fixed default.
 
