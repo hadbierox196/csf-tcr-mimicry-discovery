@@ -90,7 +90,13 @@ def test_ingest_qc_main_parses_bundled_fixtures(
 
     clonotypes = json.loads(clonotypes_out.read_text())
     neoantigens = json.loads(neoantigens_out.read_text())
-    assert len(clonotypes) == 2
+    # 4 raw clonotype IDs in the fixture; clonotype3 fails the
+    # high_confidence QC filter entirely. clonotype1 (beta-only, 11 UMI),
+    # clonotype2 (beta-only, 3 UMI -- its TRA contig is non-productive
+    # and gets filtered, but the surviving TRB contig has enough UMI
+    # support on its own to pass QcThresholds() defaults), and
+    # clonotype4 (paired, 22 UMI) all pass -> 3, not 2.
+    assert len(clonotypes) == 3
     assert len(neoantigens) == 2
     assert clonotypes[0]["sample_id"] == "synthetic-pt-001"
 
@@ -102,8 +108,9 @@ def test_candidate_pairing_with_no_reference_yields_zero_candidates(
     clonotypes_path = tmp_path / "c.json"
     neoantigens_path = tmp_path / "n.json"
     clonotypes_path.write_text(json.dumps([{
-        "sample_id": "s1", "cdr3_aa": "AAA", "v_gene": "V1", "j_gene": "J1",
-        "chain": "TRB", "umi_count": 5, "clonal_frequency": 1.0,
+        "sample_id": "s1", "cdr3_alpha": None, "v_gene_alpha": None, "j_gene_alpha": None,
+        "cdr3_beta": "AAA", "v_gene_beta": "V1", "j_gene_beta": "J1",
+        "umi_count": 5, "clonal_frequency": 1.0,
     }]))
     neoantigens_path.write_text(json.dumps([{
         "sample_id": "s1", "peptide": "SLLMWITQC", "hla_allele": "HLA-A*02:01",
@@ -131,10 +138,12 @@ def test_candidate_pairing_with_reference_generates_full_cross_product(
     clonotypes_path = tmp_path / "c.json"
     neoantigens_path = tmp_path / "n.json"
     clonotypes_path.write_text(json.dumps([
-        {"sample_id": "s1", "cdr3_aa": "AAA", "v_gene": "V1", "j_gene": "J1",
-         "chain": "TRB", "umi_count": 5, "clonal_frequency": 0.5},
-        {"sample_id": "s1", "cdr3_aa": "BBB", "v_gene": "V2", "j_gene": "J2",
-         "chain": "TRB", "umi_count": 5, "clonal_frequency": 0.5},
+        {"sample_id": "s1", "cdr3_alpha": None, "v_gene_alpha": None, "j_gene_alpha": None,
+         "cdr3_beta": "AAA", "v_gene_beta": "V1", "j_gene_beta": "J1",
+         "umi_count": 5, "clonal_frequency": 0.5},
+        {"sample_id": "s1", "cdr3_alpha": None, "v_gene_alpha": None, "j_gene_alpha": None,
+         "cdr3_beta": "BBB", "v_gene_beta": "V2", "j_gene_beta": "J2",
+         "umi_count": 5, "clonal_frequency": 0.5},
     ]))
     neoantigens_path.write_text(json.dumps([
         {"sample_id": "s1", "peptide": "SLLMWITQC", "hla_allele": "HLA-A*02:01",
@@ -190,17 +199,25 @@ def test_structure_prediction_smoke_test_mode(
 
 
 def test_structure_prediction_production_mode_raises_not_implemented(
-    tmp_path: Path, structure_prediction_script: ModuleType
+    tmp_path: Path, structure_prediction_script: ModuleType,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Without smoke_test, the real (still-scaffolded) backend is called and
-    correctly raises NotImplementedError -- this is expected, not a bug,
-    until roadmap Sprint 2/3 lands."""
+    """Without smoke_test, the real backend is invoked -- with subprocess
+    calls stubbed out so this doesn't require a real TCRdock/AlphaFold
+    install -- and correctly raises NotImplementedError at the not-yet-
+    wired output-parsing step. Expected, not a bug, until roadmap
+    Sprint 2/3 lands."""
     candidates_path = tmp_path / "candidates.json"
     candidates_path.write_text(json.dumps([{
         "sample_id": "s1", "tcr_cdr3_beta": "AAA", "tcr_v_gene": "V1", "tcr_j_gene": "J1",
+        "tcr_cdr3_alpha": "CAA", "tcr_v_gene_alpha": "VA1", "tcr_j_gene_alpha": "JA1",
         "tumor_peptide": "SLLMWITQV", "self_peptide": "SLLMWITQC",
         "hla_allele": "HLA-A*02:01", "source_gene": "MBP",
     }]))
+    monkeypatch.setattr(
+        "mimicry_discovery.structure.tcrdock_adapter.subprocess.run",
+        lambda *args, **kwargs: None,
+    )
 
     with pytest.raises(NotImplementedError):
         structure_prediction_script.main(
