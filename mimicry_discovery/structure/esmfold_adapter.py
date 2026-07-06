@@ -59,7 +59,7 @@ class ESMFoldPredictor(StructurePredictor):
     @classmethod
     def from_reference_fasta(
         cls, output_dir: Path | str, hla_fasta_path: Path | str, device: str = "cuda"
-    ) -> "ESMFoldPredictor":
+    ) -> ESMFoldPredictor:
         """Build a predictor with its HLA lookup loaded from a reference FASTA.
 
         Args:
@@ -138,7 +138,7 @@ class ESMFoldPredictor(StructurePredictor):
             NotImplementedError: Always, until model loading (see
                 :meth:`_load_model`) is implemented.
         """
-        sequence = self._build_complex_sequence(request)
+        self._build_complex_sequence(request)  # validates HLA lookup; see docstring
         if self._model is None:
             self._load_model()
         # TODO(structure-prediction): run real inference, e.g.:

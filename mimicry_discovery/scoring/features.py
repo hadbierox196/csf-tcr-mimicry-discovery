@@ -76,7 +76,7 @@ def peptide_similarity(
         raise ValueError("property_match_credit must be in [0, 1].")
 
     total = 0.0
-    for a, b in zip(peptide_a.upper(), peptide_b.upper()):
+    for a, b in zip(peptide_a.upper(), peptide_b.upper(), strict=True):
         if a == b:
             total += 1.0
         elif _PROPERTY_GROUPS.get(a) == _PROPERTY_GROUPS.get(b) and a in _PROPERTY_GROUPS:

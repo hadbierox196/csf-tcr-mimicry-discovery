@@ -14,7 +14,7 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -85,7 +85,7 @@ def write_provenance_manifest(
             exist.
     """
     manifest = {
-        "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "timestamp_utc": datetime.now(UTC).isoformat(),
         "git_sha": current_git_sha(),
         "input_hashes": {str(p): hash_file(p) for p in input_paths},
         "tool_versions": tool_versions,

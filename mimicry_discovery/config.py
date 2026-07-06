@@ -13,7 +13,7 @@ validation framework would duplicate responsibility without adding much.
 from __future__ import annotations
 
 from dataclasses import dataclass, field, fields, is_dataclass
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any, TypeVar, get_type_hints
 
@@ -22,7 +22,7 @@ import yaml
 T = TypeVar("T")
 
 
-class StructureBackend(str, Enum):
+class StructureBackend(StrEnum):
     """Supported TCR-pMHC structure prediction backends."""
 
     TCRDOCK = "tcrdock"
